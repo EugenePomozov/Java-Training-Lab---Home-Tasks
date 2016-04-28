@@ -3,50 +3,88 @@ package runners;
 import java.util.Random;
 
 public class SortExample {
+	private static int agr;
+	private static int[] digits;
+	private static int size = 10000;
 
-	public static void main(String[] args) {
-	 int[] digits = new int[100];
+	public static void main(String[] args) throws InterruptedException {
+
+		digits = new int[size];
 		Random rand = new Random();
-		for(int i = 0;i<100;i++){
-			digits[i] = rand.nextInt(300);
+		for (int i = 0; i < size; i++) {
+			digits[i] = rand.nextInt(100000);
 
-		System.out.print(digits[i]+" ");
 		}
 
-		int min,min_j,temp,max,max_j;
-		for (int i=0,k=99;i<50;i++,k--){
-			min = digits[i];
-			min_j=i;
-			max=digits[k];
-			max_j=100-i;
-			for(int j=i,l=99-i;j<100-i;j++,l--)
-			{
-				if(digits[j]<min){
-					min=digits[j];
-					min_j=j;
-				}
-				if(digits[l]>max){
-					max=digits[l];
-					max_j=l;
-				}
-			}
-			if(i!=min_j){
-				temp=digits[i];
-				digits[i]=digits[min_j];
-				digits[min_j]=temp;
-			}
-			if(i!=max_j){
-				temp=digits[k];
-				digits[k]=digits[max_j];
-				digits[max_j]=temp;
-			}
+		int rightIndex = divide(0, size - 1);
+
+		Sorting s1 = new Sorting(digits,0,rightIndex);
+		new Thread(s1).start();;
+
+		Sorting s2 = new Sorting(digits,rightIndex,size);
+		 new Thread(s2).start();;		
+
+		System.out.println("\n");
+		
+		while(!s1.isDone() || !s2.isDone()){
+			Thread.sleep(5);
 		}
-		System.out.println();
 		
-		for(int i = 0;i<100;i++){
-		System.out.print(digits[i]+" ");
-		}	
+		for (int i = 0; i < size; i++) {
+			if (i == rightIndex)
+				System.out.println("\n");
+			System.out.print(digits[i] + " ");
+			if(i==1000) break;
+
+		}
 		
+	}
+/**
+ * Allocates an array relative to the average values of the array.
+ * Values less than the average are left, great - right
+ * @param left
+ * @param right
+ * @return number average
+ */
+	private static int divide(int left, int right) {
+
+		int min = digits[left], max = digits[left];
+
+		for (int i = left; i < right; i++) {
+			if (digits[i] < min) {
+				min = digits[i];
+
+			}
+			if (digits[i] > max) {
+				max = digits[i];
+
+			}
+
+		}
+
+		agr = ((int) (max + min) / 2);
+
+		int j = size - 1;
+		int i = 0;
+		for (; i < j; i++) {
+			if (digits[i] > agr)
+				for (; j > i; j--) {
+					if (digits[j] <= agr) {
+						swap(i, j);
+						break;
+					}
+				}
+
+		}
+
+		return j;
+	}
+
+	private static void swap(int i, int j) {
+		int temp = digits[i];
+		digits[i] = digits[j];
+		digits[j] = temp;
+
 	}
 
 }
