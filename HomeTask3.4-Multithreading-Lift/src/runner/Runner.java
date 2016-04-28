@@ -1,24 +1,23 @@
 package runner;
 
+import gen.CallGeneration;
 import lift.Lift;
+import managers.CallManager;
 
 public class Runner {
 
-	public static void main(String[] args) throws InterruptedException {
-		Lift lift = new Lift();
+	public static void main(String[] args) {
+		CallManager callManager = new CallManager();
+		Lift lift = new Lift(callManager);
 		
-		Thread thread = new Thread(lift);
-		thread.start();
+		Thread liftThread = new Thread(lift);
+		liftThread.start();
 		
-		Thread.sleep(5000);
-		lift.call(1, 8);
-		lift.call(1,5);
-		lift.call(3, 9);
+				
+		CallGeneration cGen = new CallGeneration(callManager);
+		Thread genThread = new Thread(cGen);
+		genThread.start();
 		
-		lift.call(5, 2);
-		Thread.sleep(16000);
-		lift.call(4, 7);
-
 	}
 
 }
